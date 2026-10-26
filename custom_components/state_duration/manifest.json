@@ -3,10 +3,10 @@
   "name": "State Duration Tracker",
   "codeowners": [],
   "config_flow": true,
-  "documentation": "https://github.com/YOUR_USER/ha-state-duration",
+  "documentation": "https://github.com/dimitarraychev/ha-state-duration",
   "integration_type": "helper",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/YOUR_USER/ha-state-duration/issues",
+  "issue_tracker": "https://github.com/dimitarraychev/ha-state-duration/issues",
   "requirements": [],
   "version": "0.2.0"
 }
