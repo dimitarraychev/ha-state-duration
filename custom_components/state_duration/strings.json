@@ -1,0 +1,81 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "State Duration Tracker",
+        "description": "This creates the State Duration Tracker service. Afterwards use **Add tracker** on the integration page to track an entity, and the cog next to a tracker to change it."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "State Duration Tracker is already set up. Add trackers from its integration page."
+    }
+  },
+  "config_subentries": {
+    "tracker": {
+      "entry_type": "Tracker",
+      "initiate_flow": {
+        "user": "Add tracker",
+        "reconfigure": "Reconfigure tracker"
+      },
+      "step": {
+        "user": {
+          "title": "Track state duration",
+          "description": "Pick the entity whose state durations you want to track.",
+          "data": {
+            "entity_id": "Entity"
+          }
+        },
+        "states": {
+          "title": "States to track",
+          "description": "Choose which states of `{entity_id}` to track. `unknown` and `unavailable` are always ignored and never reset a timer. You can also type custom states.",
+          "data": {
+            "name": "Name",
+            "states": "States to track"
+          }
+        },
+        "settings": {
+          "title": "Settings",
+          "description": "All optional. The alert creates a binary sensor that turns on when the entity stays in a state for too long.",
+          "data": {
+            "daily_stats": "Daily totals and counts",
+            "update_interval": "Update interval (minutes)",
+            "alert_state": "Alert state",
+            "alert_minutes": "Alert after (minutes)"
+          },
+          "data_description": {
+            "daily_stats": "Adds 'time today' and 'count today' sensors for each tracked state.",
+            "update_interval": "How often duration sensors refresh. Higher values write less to the database.",
+            "alert_state": "State to watch, e.g. Open.",
+            "alert_minutes": "Turn the alert on after this many minutes."
+          }
+        },
+        "reconfigure": {
+          "title": "Reconfigure tracker",
+          "description": "Settings for `{entity_id}`. Sensors for removed states are deleted.",
+          "data": {
+            "name": "Name",
+            "states": "States to track",
+            "daily_stats": "Daily totals and counts",
+            "update_interval": "Update interval (minutes)",
+            "alert_state": "Alert state",
+            "alert_minutes": "Alert after (minutes)"
+          },
+          "data_description": {
+            "daily_stats": "Adds 'time today' and 'count today' sensors for each tracked state.",
+            "update_interval": "How often duration sensors refresh. Higher values write less to the database.",
+            "alert_state": "State to watch, e.g. Open. Leave empty to disable.",
+            "alert_minutes": "Turn the alert on after this many minutes."
+          }
+        }
+      },
+      "error": {
+        "no_states": "Select at least one state to track.",
+        "alert_incomplete": "Set both the alert state and the alert minutes, or leave both empty.",
+        "alert_state_not_tracked": "The alert state must be one of the tracked states."
+      },
+      "abort": {
+        "reconfigure_successful": "Tracker updated."
+      }
+    }
+  }
+}
