@@ -23,6 +23,8 @@ from .const import (
     CONF_ALERT_MINUTES,
     CONF_ALERT_STATE,
     CONF_DAILY_STATS,
+    CONF_PER_STATE_SENSORS,
+    CONF_SINCE_SENSOR,
     CONF_STATES,
     CONF_UPDATE_INTERVAL,
     DEFAULT_UPDATE_INTERVAL,
@@ -56,6 +58,8 @@ def _minutes_selector(min_value: int, max_value: int, unit: str = "min") -> sele
 
 def _settings_fields(alert_choices: list[str], hass: HomeAssistant, entity_id: str, *, custom_alert: bool) -> dict:
     return {
+        vol.Optional(CONF_SINCE_SENSOR, default=False): selector.BooleanSelector(),
+        vol.Optional(CONF_PER_STATE_SENSORS, default=False): selector.BooleanSelector(),
         vol.Optional(CONF_DAILY_STATS, default=False): selector.BooleanSelector(),
         vol.Optional(CONF_UPDATE_INTERVAL, default=DEFAULT_UPDATE_INTERVAL): _minutes_selector(1, 60),
         vol.Optional(CONF_ALERT_STATE): selector.SelectSelector(
@@ -85,6 +89,8 @@ def _build_options(entity_id: str, states: list[str], data: dict[str, Any]) -> d
     options: dict[str, Any] = {
         CONF_ENTITY_ID: entity_id,
         CONF_STATES: states,
+        CONF_SINCE_SENSOR: bool(data.get(CONF_SINCE_SENSOR, False)),
+        CONF_PER_STATE_SENSORS: bool(data.get(CONF_PER_STATE_SENSORS, False)),
         CONF_DAILY_STATS: bool(data.get(CONF_DAILY_STATS, False)),
         CONF_UPDATE_INTERVAL: int(data.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL)),
     }
@@ -174,7 +180,8 @@ class TrackerSubentryFlow(ConfigSubentryFlow):
     async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
         errors: dict[str, str] = {}
         subentry = self._get_reconfigure_subentry()
-        current = dict(subentry.data)
+        # Trackers created before these options existed still have all their sensors.
+        current = {CONF_SINCE_SENSOR: True, CONF_PER_STATE_SENSORS: True, **subentry.data}
         entity_id = current[CONF_ENTITY_ID]
 
         if user_input is not None:
