@@ -8,6 +8,8 @@ SUBENTRY_TYPE = "tracker"
 
 CONF_STATES = "states"
 CONF_DAILY_STATS = "daily_stats"
+CONF_SINCE_SENSOR = "since_sensor"
+CONF_PER_STATE_SENSORS = "per_state_sensors"
 CONF_UPDATE_INTERVAL = "update_interval"  # minutes
 CONF_ALERT_STATE = "alert_state"
 CONF_ALERT_MINUTES = "alert_minutes"
