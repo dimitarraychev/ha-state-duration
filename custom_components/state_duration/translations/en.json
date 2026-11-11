@@ -35,14 +35,18 @@
         },
         "settings": {
           "title": "Settings",
-          "description": "All optional. The alert creates a binary sensor that turns on when the entity stays in a state for too long.",
+          "description": "All optional. The 'Current state duration' sensor is always created. The alert creates a binary sensor that turns on when the entity stays in a state for too long.",
           "data": {
+            "since_sensor": "Current state since sensor",
+            "per_state_sensors": "Separate duration sensor per state",
             "daily_stats": "Daily totals and counts",
             "update_interval": "Update interval (minutes)",
             "alert_state": "Alert state",
             "alert_minutes": "Alert after (minutes)"
           },
           "data_description": {
+            "since_sensor": "Adds a timestamp sensor showing when the current state started.",
+            "per_state_sensors": "Adds one duration sensor for each tracked state (0 while in another state).",
             "daily_stats": "Adds 'time today' and 'count today' sensors for each tracked state.",
             "update_interval": "How often duration sensors refresh. Higher values write less to the database.",
             "alert_state": "State to watch, e.g. Open.",
@@ -55,12 +59,16 @@
           "data": {
             "name": "Name",
             "states": "States to track",
+            "since_sensor": "Current state since sensor",
+            "per_state_sensors": "Separate duration sensor per state",
             "daily_stats": "Daily totals and counts",
             "update_interval": "Update interval (minutes)",
             "alert_state": "Alert state",
             "alert_minutes": "Alert after (minutes)"
           },
           "data_description": {
+            "since_sensor": "Adds a timestamp sensor showing when the current state started.",
+            "per_state_sensors": "Adds one duration sensor for each tracked state (0 while in another state).",
             "daily_stats": "Adds 'time today' and 'count today' sensors for each tracked state.",
             "update_interval": "How often duration sensors refresh. Higher values write less to the database.",
             "alert_state": "State to watch, e.g. Open. Leave empty to disable.",
