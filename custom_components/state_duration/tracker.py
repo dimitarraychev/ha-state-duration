@@ -23,6 +23,8 @@ from .const import (
     CONF_ALERT_MINUTES,
     CONF_ALERT_STATE,
     CONF_DAILY_STATS,
+    CONF_PER_STATE_SENSORS,
+    CONF_SINCE_SENSOR,
     CONF_STATES,
     CONF_UPDATE_INTERVAL,
     DEFAULT_UPDATE_INTERVAL,
@@ -48,6 +50,9 @@ class StateDurationTracker:
         self.entity_id: str = er.async_validate_entity_id(er.async_get(hass), opts[CONF_ENTITY_ID])
         self.tracked: list[str] = list(opts[CONF_STATES])
         self.daily_stats: bool = bool(opts.get(CONF_DAILY_STATS, False))
+        # Trackers created before these options existed keep all their sensors.
+        self.since_sensor: bool = bool(opts.get(CONF_SINCE_SENSOR, True))
+        self.per_state_sensors: bool = bool(opts.get(CONF_PER_STATE_SENSORS, True))
         self.interval = timedelta(minutes=int(opts.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL)))
         self.alert_state: str | None = opts.get(CONF_ALERT_STATE) or None
         self.alert_seconds: int = int(opts.get(CONF_ALERT_MINUTES) or 0) * 60
