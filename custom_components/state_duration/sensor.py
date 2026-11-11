@@ -19,12 +19,12 @@ async def async_setup_entry(
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     for subentry_id, tracker in entry.runtime_data.items():
-        entities: list[_BaseSensor] = [
-            CurrentDurationSensor(tracker),
-            CurrentSinceSensor(tracker),
-        ]
+        entities: list[_BaseSensor] = [CurrentDurationSensor(tracker)]
+        if tracker.since_sensor:
+            entities.append(CurrentSinceSensor(tracker))
         for state in tracker.tracked:
-            entities.append(PerStateDurationSensor(tracker, state))
+            if tracker.per_state_sensors:
+                entities.append(PerStateDurationSensor(tracker, state))
             if tracker.daily_stats:
                 entities.append(TodayDurationSensor(tracker, state))
                 entities.append(TodayCountSensor(tracker, state))
