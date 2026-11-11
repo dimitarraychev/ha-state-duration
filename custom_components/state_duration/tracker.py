@@ -11,6 +11,7 @@ from homeassistant.core import Event, EventStateChangedData, HomeAssistant, call
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device import async_entity_id_to_device
 from homeassistant.helpers.event import (
+    async_call_later,
     async_track_state_change_event,
     async_track_time_change,
     async_track_time_interval,
@@ -29,6 +30,11 @@ from .const import (
     IGNORED_STATES,
     STORAGE_VERSION,
 )
+
+# After a Home Assistant restart many devices report a false "off" for a while
+# before their real state arrives. Ignore the source entity for this long, then
+# read its actual state once.
+STARTUP_GRACE = timedelta(seconds=90)
 
 
 class StateDurationTracker:
@@ -58,6 +64,7 @@ class StateDurationTracker:
         self._listeners: list[Callable[[], None]] = []
         self._unsubs: list[Callable[[], None]] = []
         self._discarded = False
+        self._grace_until: datetime | None = None
 
     # -- lifecycle -----------------------------------------------------
     async def async_start(self) -> None:
@@ -74,7 +81,12 @@ class StateDurationTracker:
             self.since = None
 
         current = self.hass.states.get(self.entity_id)
-        if current is not None:
+        if data and not self.hass.is_running:
+            # Home Assistant is still starting: keep the stored state and wait
+            # for the source entity to settle before trusting what it reports.
+            self._grace_until = dt_util.utcnow() + STARTUP_GRACE
+            self._unsubs.append(async_call_later(self.hass, STARTUP_GRACE, self._async_grace_over))
+        elif current is not None:
             now = dt_util.utcnow()
             if data:
                 self._apply(current.state, now)
@@ -143,7 +155,18 @@ class StateDurationTracker:
         new = event.data["new_state"]
         if new is None:
             return
+        if self._grace_until is not None and dt_util.utcnow() < self._grace_until:
+            return  # startup grace period: the source may still report a false state
         if self._apply(new.state, dt_util.utcnow()):
+            self._schedule_save()
+            self._notify()
+
+    @callback
+    def _async_grace_over(self, _now: datetime) -> None:
+        """Startup grace is over: read the source entity's real state once."""
+        self._grace_until = None
+        current = self.hass.states.get(self.entity_id)
+        if current is not None and self._apply(current.state, dt_util.utcnow()):
             self._schedule_save()
             self._notify()
 
