@@ -9,5 +9,5 @@
   "issue_tracker": "https://github.com/YOUR_USER/ha-state-duration/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.2.1-beta"
+  "version": "0.2.2-beta"
 }
