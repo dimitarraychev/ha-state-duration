@@ -54,7 +54,7 @@ class _DurationSensor(_BaseSensor):
     _attr_native_unit_of_measurement = UnitOfTime.SECONDS
     _attr_suggested_unit_of_measurement = UnitOfTime.MINUTES
     _attr_suggested_display_precision = 0
-    _attr_icon = "mdi:timer-outline"
+    _attr_icon = "mdi:progress-clock"
 
 
 class CurrentDurationSensor(_DurationSensor):
